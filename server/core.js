@@ -26,6 +26,7 @@ console.log(`${bookdirs.length} book(s) found.`)
 
 // Initialize the app.
 const app = express()
+app.set('view engine', 'ejs')
 
 // Configure styles.
 app.get('/style', (req, res) => {
@@ -36,21 +37,17 @@ app.get('/style', (req, res) => {
 app.get('/', (req, res) => res.redirect('/list'))
 app.get('/list', (req, res) => {
 
-    // Header.
-    var content = `<!DOCTYPE html>${config.header}<html><body>`
-
-    // Title.
-    content += `<h1 class=\"title\">${config.servername}: Book List</h1>`
+    // Init.
+    var content = ''
 
     // Book list.
     for (var i=0; i<bookdirs.length; i++) {
         var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
-        content += `&bullet; <a class=\"larger\" href=\"${'/book/' + currentbook}\"><strong>${bookinfo[currentbook].author}:</strong> ${bookinfo[currentbook].title}</a><br>`
+        content += `<li><a class=\"larger text-body\" href=\"${'/book/' + currentbook}\"><strong>${bookinfo[currentbook].author},</strong> ${bookinfo[currentbook].title}</a></li>`
     }
 
-    // Footer.
-    content += `${config.footer}</body></html>`
-    res.send(content)
+    // Load it up!
+    res.render(path.join(wwwbase, '/list'), { title: config.servername, books: content })
 
 })
 
