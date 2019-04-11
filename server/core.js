@@ -15,7 +15,16 @@ console.log('Loading config...')
 const config = require(path.join(__dirname, '/config.json'))
 const wwwbase = path.join(__dirname, config.wwwbase)
 console.log(`Base dir is ${wwwbase}`)
-const books = getDirectories(path.join(wwwbase, '/books'))
+
+// Prep book list.
+console.log('Loading books...')
+var bookdirs = getDirectories(path.join(wwwbase, '/books'))
+var bookinfo = []
+for (var i=0; i<bookdirs.length; i++) {
+    var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
+    bookinfo[currentbook] = require(path.join(bookdirs[i], '/info.json'))
+}
+console.log(`${bookdirs.length} book(s) found.`)
 
 // Initialize the app.
 console.log(`Initializing BookJS server, \"${config.servername}\"...`)
@@ -38,9 +47,9 @@ app.get('/list', (req, res) => {
     content += `<h1>${config.servername}: Book List</h1>`
 
     // Book list.
-    for (var i=0; i<books.length; i++) {
-        var bookdir = books[i].split('\\')[books[i].split('\\').length-1]
-        content += `- <a class=\"larger\" href=\"${'/book/' + bookdir}\">${bookdir}</a><br>`
+    for (var i=0; i<bookdirs.length; i++) {
+        var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
+        content += `- <a class=\"larger\" href=\"${'/book/' + currentbook}\">${currentbook}</a><br>`
     }
 
     // Footer.
@@ -50,11 +59,9 @@ app.get('/list', (req, res) => {
 })
 
 // Configure the books.
-var bookinfo = []
 app.get('/book/:id', (req, res) => {
 
     if (fs.existsSync(path.join(wwwbase, `/books/${req.params.id}`))) {
-        bookinfo[req.params.id] = require(path.join(wwwbase, `/books/${req.params.id}/info.json`))
         res.sendFile(path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].index}`))
     } else {
         res.sendFile(path.join(wwwbase, '/books/invalid.html'))
