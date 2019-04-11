@@ -47,7 +47,10 @@ app.get('/list', (req, res) => {
     }
 
     // Load it up!
-    res.render(path.join(wwwbase, '/booklist'), { title: config.servername, books: content })
+    res.render(path.join(wwwbase, '/booklist'), {
+        title: config.servername,
+        books: content
+    })
 
 })
 
@@ -65,10 +68,18 @@ app.get('/book/:id', (req, res) => {
         }
 
         // Send it!
-        res.render(path.join(wwwbase, '/pagelist'), { title: config.servername, book: bookinfo[req.params.id].title, author: bookinfo[req.params.id].author, pages: content })
+        res.render(path.join(wwwbase, '/pagelist'), {
+            title: config.servername, book: bookinfo[req.params.id].title,
+            author: bookinfo[req.params.id].author,
+            pages: content
+        })
 
     } else {
-        res.render(path.join(wwwbase, '/invalid'), { title: config.servername, type: 'book', message: 'This book does not exist or has been moved.' })
+        res.render(path.join(wwwbase, '/invalid'), {
+            title: config.servername,
+            type: 'book',
+            message: 'This book does not exist or has been moved.'
+        })
     }
 
 })
@@ -77,13 +88,29 @@ app.get('/book/:id', (req, res) => {
 app.get('/book/:id/:pg', (req, res) => {
 
     if (bookinfo[req.params.id] != undefined) {
+
         if (bookinfo[req.params.id].pages[req.params.pg-1] != undefined) {
-            res.render(path.join(wwwbase, '/bookpage'), { title: config.servername, book: bookinfo[req.params.id].title, page: bookinfo[req.params.id].pages[req.params.pg-1][0], content: path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].pages[req.params.pg-1][1]}`) })
+            res.render(path.join(wwwbase, '/bookpage'), {
+                back: '/book/' + req.params.id,
+                title: config.servername,
+                book: bookinfo[req.params.id].title,
+                page: bookinfo[req.params.id].pages[req.params.pg-1][0],
+                content: path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].pages[req.params.pg-1][1]}`)
+            })
+
         } else {
-            res.render(path.join(wwwbase, '/invalid'), { title: config.servername, type: 'page', message: 'This page does not exist or has been moved.' })
+            res.render(path.join(wwwbase, '/invalid'), {
+                title: config.servername,
+                type: 'page',
+                message: 'This page does not exist or has been moved.'
+            })
         }
     } else {
-        res.render(path.join(wwwbase, '/invalid'), { title: config.servername, type: 'book', message: 'This book does not exist or has been moved.' })
+        res.render(path.join(wwwbase, '/invalid'), {
+            title: config.servername,
+            type: 'book',
+            message: 'This book does not exist or has been moved.'
+        })
     }
 
 })
