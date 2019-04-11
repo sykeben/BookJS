@@ -44,12 +44,12 @@ app.get('/list', (req, res) => {
     var content = `<!DOCTYPE html>${config.header}<html><body>`
 
     // Title.
-    content += `<h1>${config.servername}: Book List</h1>`
+    content += `<h1 class=\"title\">${config.servername}: Book List</h1>`
 
     // Book list.
     for (var i=0; i<bookdirs.length; i++) {
         var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
-        content += `- <a class=\"larger\" href=\"${'/book/' + currentbook}\">${currentbook}</a><br>`
+        content += `&bullet; <a class=\"larger\" href=\"${'/book/' + currentbook}\"><strong>${bookinfo[currentbook].author}:</strong> ${bookinfo[currentbook].title}</a><br>`
     }
 
     // Footer.
@@ -61,7 +61,7 @@ app.get('/list', (req, res) => {
 // Configure the books.
 app.get('/book/:id', (req, res) => {
 
-    if (fs.existsSync(path.join(wwwbase, `/books/${req.params.id}`))) {
+    if (bookinfo[req.params.id] != undefined) {
         res.sendFile(path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].index}`))
     } else {
         res.sendFile(path.join(wwwbase, '/books/invalid.html'))
