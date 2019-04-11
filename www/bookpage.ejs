@@ -4,7 +4,7 @@
 
     <head>
 
-        <title>Test Book</title>
+        <title><%- title %></title>
         
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 
@@ -13,16 +13,12 @@
     <body>
 
         <div class="w-100 p-3 mt-0 mx-0 bg-light text-center shadow-sm">
-            <h1 class="display-4">Introduction</h1>
+            <h1 class="display-4"><%- book %></h1>
+            <h3 class="display-5 font-weight-lighter"><%- page %></h3>
         </div>
 
         <div class="container py-5">
-            <h1 class="display-5 font-weight-light">Welcome to the built-in manual for BookJS.</h1>
-            <p class="lead">This book will help you configure the server, add new books, and more.</p>
-            <p class="mt-5">Sections:&nbsp;
-                <a class="btn btn-sm btn-secondary" href="/book/manual">Index</a>
-                <a class="btn btn-sm btn-primary" href="/book/manual/1">Introduction</a>
-            </p>
+            <%- include(content) %>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>

@@ -3,7 +3,7 @@
     "title": "Book JS Manual",
     "author": "SykeBen",
     "pages": [
-        ["Introduction", "intro.html"]
+        ["Introduction", "intro"]
     ]
 
 }
