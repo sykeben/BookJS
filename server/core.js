@@ -11,13 +11,11 @@ const isDirectory = source => fs.lstatSync(source).isDirectory()
 const getDirectories = source => fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory)
 
 // Configuration.
-console.log('Loading config...')
 const config = require(path.join(__dirname, '/config.json'))
 const wwwbase = path.join(__dirname, config.wwwbase)
-console.log(`Base dir is ${wwwbase}`)
+console.log(`Base dir is ${wwwbase}.`)
 
 // Prep book list.
-console.log('Loading books...')
 var bookdirs = getDirectories(path.join(wwwbase, '/books'))
 var bookinfo = []
 for (var i=0; i<bookdirs.length; i++) {
@@ -27,7 +25,6 @@ for (var i=0; i<bookdirs.length; i++) {
 console.log(`${bookdirs.length} book(s) found.`)
 
 // Initialize the app.
-console.log(`Initializing BookJS server, \"${config.servername}\"...`)
 const app = express()
 
 // Configure styles.
@@ -36,7 +33,6 @@ app.get('/style', (req, res) => {
 })
 
 // Configure the index page.
-console.log('Configuring the index page...')
 app.get('/', (req, res) => res.redirect('/list'))
 app.get('/list', (req, res) => {
 
@@ -85,5 +81,4 @@ app.get('/book/:id/:pg', (req, res) => {
 })
 
 // Start the server.
-console.log('Starting the server...')
-app.listen(config.port)
+app.listen(config.port, () => console.log(`Server ready on port ${config.port}.`))

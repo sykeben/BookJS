@@ -3,9 +3,10 @@
     "title": "Test Book",
     "author": "SykeBen",
 
-    "index": "content.html",
+    "index": "index.html",
     "pages": [
-        "page_1.txt"
+        "page_1.txt",
+        "page_2.txt"
     ]
 
 }
