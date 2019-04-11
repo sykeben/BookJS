@@ -58,13 +58,28 @@ app.get('/list', (req, res) => {
 
 })
 
-// Configure the books.
+// Configure book indeicies.
 app.get('/book/:id', (req, res) => {
 
     if (bookinfo[req.params.id] != undefined) {
         res.sendFile(path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].index}`))
     } else {
-        res.sendFile(path.join(wwwbase, '/books/invalid.html'))
+        res.sendFile(path.join(wwwbase, '/invalid/book.html'))
+    }
+
+})
+
+// Configure book pages.
+app.get('/book/:id/:pg', (req, res) => {
+
+    if (bookinfo[req.params.id] != undefined) {
+        if (bookinfo[req.params.id].pages[req.params.pg-1] != undefined) {
+            res.sendFile(path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].pages[req.params.pg-1]}`))
+        } else {
+            res.sendFile(path.join(wwwbase, '/invalid/page.html'))
+        }
+    } else {
+        res.sendFile(path.join(wwwbase, '/invalid/book.html'))
     }
 
 })

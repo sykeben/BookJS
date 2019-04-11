@@ -2,6 +2,10 @@
 
     "title": "Test Book",
     "author": "SykeBen",
-    "index": "content.txt"
+
+    "index": "content.html",
+    "pages": [
+        "page_1.txt"
+    ]
 
 }
