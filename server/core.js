@@ -15,15 +15,6 @@ const config = require(path.join(__dirname, '/config.json'))
 const wwwbase = path.join(__dirname, config.wwwbase)
 console.log(`Base dir is ${wwwbase}.`)
 
-// Prep book list.
-var bookdirs = getDirectories(path.join(wwwbase, '/books'))
-var bookinfo = []
-for (var i=0; i<bookdirs.length; i++) {
-    var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
-    bookinfo[currentbook] = require(path.join(bookdirs[i], '/info.json'))
-}
-console.log(`${bookdirs.length} book(s) found.`)
-
 // Initialize the app.
 const app = express()
 app.set('view engine', 'ejs')
@@ -32,6 +23,15 @@ app.set('view engine', 'ejs')
 app.get('/style', (req, res) => {
     res.sendFile(path.join(wwwbase, '/common.css'))
 })
+
+// Prep book list.
+var bookdirs = getDirectories(path.join(wwwbase, '/books'))
+var bookinfo = []
+for (var i=0; i<bookdirs.length; i++) {
+    var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
+    bookinfo[currentbook] = require(path.join(bookdirs[i], '/info.json'))
+}
+console.log(`${bookdirs.length} book(s) found.`)
 
 // Configure the index page.
 app.get('/', (req, res) => res.redirect('/list'))
@@ -84,12 +84,40 @@ app.get('/book/:id', (req, res) => {
 
 })
 
+// Configure book content.
+app.get('/book/:id/content/:file', function(req, res) {
+
+    if (bookinfo[req.params.id] != undefined) {
+
+        if (fs.existsSync(path.join(wwwbase, `/books/${req.params.id}/content/${req.params.file}`))) {
+
+            res.sendFile(path.join(wwwbase, `/books/${req.params.id}/content/${req.params.file}`))
+
+        } else {
+            res.render(path.join(wwwbase, '/invalid'), {
+                title: config.servername,
+                type: 'book',
+                message: 'This book does not exist or has been moved.'
+            })
+        }
+
+    } else {
+        res.render(path.join(wwwbase, '/invalid'), {
+            title: config.servername,
+            type: 'resource',
+            message: 'This file does not exist or has been moved.'
+        })
+    }
+
+})
+
 // Configure book pages.
 app.get('/book/:id/:pg', (req, res) => {
 
     if (bookinfo[req.params.id] != undefined) {
 
         if (bookinfo[req.params.id].pages[req.params.pg-1] != undefined) {
+
             res.render(path.join(wwwbase, '/bookpage'), {
                 back: '/book/' + req.params.id,
                 title: config.servername,
