@@ -1,0 +1,11 @@
+{
+
+    "title": "Book JS Manual",
+    "author": "SykeBen",
+
+    "index": "index.html",
+    "pages": [
+        "intro.html"
+    ]
+
+}
