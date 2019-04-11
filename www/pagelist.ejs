@@ -3,19 +3,26 @@
 <html>
 
     <head>
-        
-        <title>Error: Page</title>
-        
+
+        <title><%- title %></title>
+
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
         <link rel="stylesheet" href="/style">
-        
+
     </head>
 
     <body>
 
-        <h1 class="title">Uh, Oh!</h1>
+        <div class="w-100 p-3 mt-0 mx-0 bg-light text-center shadow-sm">
+            <h1 class="display-4 mb-1"><%- book %></h1>
+            <h3 class="display-5 font-weight-lighter"><%- author %></h3>
+        </div>
 
-        <h3>This page does not exist.</h3>
+        <div class="container py-5">
+            <ul>
+                <%- pages %>
+            </ul>
+        </div>
 
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>

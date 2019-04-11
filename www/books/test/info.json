@@ -2,11 +2,9 @@
 
     "title": "Test Book",
     "author": "SykeBen",
-
-    "index": "index.html",
     "pages": [
-        "page_1.txt",
-        "page_2.txt"
+        ["Page 1", "page_1.txt"],
+        ["Page 2", "page_2.txt"]
     ]
 
 }

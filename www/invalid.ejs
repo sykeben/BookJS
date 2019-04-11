@@ -4,26 +4,22 @@
 
     <head>
 
-        <title>Test Book</title>
-        
+        <title><%- title %></title>
+
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+        <link rel="stylesheet" href="/style">
 
     </head>
 
     <body>
 
         <div class="w-100 p-3 mt-0 mx-0 bg-light text-center shadow-sm">
-            <h1 class="display-4">Hello, World!</h1>
+            <h1 class="display-4">Uh, Oh!</h1>
         </div>
 
         <div class="container py-5">
-            <h1 class="display-5 font-weight-light">This is a test book.</h1>
-            <p class="lead">This book tests the functionality of BookJS.</p>
-            <p class="mt-5">Pages:&nbsp;
-                <a class="btn btn-sm btn-primary" href="/book/test">Index</a>
-                <a class="btn btn-sm btn-secondary" href="/book/test/1">1</a>
-                <a class="btn btn-sm btn-secondary" href="/book/test/2">2</a>
-            </p>
+            <h1 class="display-5 font-weight-light mb-4">Invalid <%- type %>.</h1>
+            <p class="lead"><%- message %></p>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
