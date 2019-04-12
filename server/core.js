@@ -43,14 +43,15 @@ app.get('/list', (req, res) => {
     // Book list.
     for (var i=0; i<bookdirs.length; i++) {
         var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
-        if ( ((i%3)==0) || (i==0) ) content += '<div class="row">'
+        if ((i%4) == 0 && (i != 0)) content += '</div>'
+        if ( ((i%4)==0) || (i==0) ) content += '<div class="row mb-5">'
         content += '<div class="col-3 text-center">'
         content += `<a class=\"larger text-body\" href=\"${'/book/' + currentbook}\">`
         content += `<img class=\"img-fluid\" src=\"/book/${currentbook}/cover\"><br>`
         content += `${bookinfo[currentbook].title}, <span class="font-italic">${bookinfo[currentbook].author}</span>`
         content += '</a>'
         content += '</div>'
-        if ( ((i%3)==0) || (i==0) ) content += '</div>'
+        if (i == bookdirs.length-1) content += '</div>'
     }
 
     // Load it up!
