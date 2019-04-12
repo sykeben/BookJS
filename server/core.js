@@ -83,6 +83,7 @@ app.get('/book/:id', (req, res) => {
         res.render(path.join(wwwbase, '/pagelist'), {
             title: config.servername, book: bookinfo[req.params.id].title,
             author: bookinfo[req.params.id].author,
+            website: bookinfo[req.params.id].website,
             desc: bookinfo[req.params.id].desc,
             pages: content
         })
