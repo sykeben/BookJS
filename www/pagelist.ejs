@@ -14,18 +14,23 @@
     <body>
 
         <div class="w-100 p-3 mt-0 mx-0 bg-light shadow-sm">
-                <div class="container-fluid row p-0 m-0">
-                    <div class="col-3 p-0 m-0">
-                        <a href="/list" class="btn btn-light border">Back</a>
-                    </div>
-                    <div class="col-6 text-center">
-                        <h1 class="display-4 mb-1"><%- book %></h1>
-                        <h3 class="display-5 font-weight-lighter">by <a href="<%- website %>" class="text-body"><%- author %></a></h3>
-                    </div>
-                    <div class="col-3 p-0 m-0 text-right">
-                        <img class="align-top" src="<%- cover %>" height="64">
-                    </div>
+            <div class="container-fluid row p-0 m-0">
+                <div class="col-3 p-0 m-0">
+                    <nav>
+                        <ol class="breadcrumb bg-light p-0">
+                            <li class="breadcrumb-item"><a href="/list">List</a></li>
+                            <li class="breadcrumb-item active"><%- book %></li>
+                        </ol>
+                    </nav>
                 </div>
+                <div class="col-6 text-center">
+                    <h1 class="display-4 mb-1"><%- book %></h1>
+                    <h3 class="display-5 font-weight-lighter">by <a href="<%- website %>" class="text-body"><%- author %></a></h3>
+                </div>
+                <div class="col-3 p-0 m-0 text-right">
+                    <img class="align-top" src="<%- cover %>" height="64">
+                </div>
+            </div>
         </div>
 
         <div class="container py-5">
