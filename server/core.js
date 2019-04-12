@@ -84,6 +84,7 @@ app.get('/book/:id', (req, res) => {
             title: config.servername, book: bookinfo[req.params.id].title,
             author: bookinfo[req.params.id].author,
             website: bookinfo[req.params.id].website,
+            cover: `/book/${req.params.id}/cover`,
             desc: bookinfo[req.params.id].desc,
             pages: content
         })
@@ -158,6 +159,7 @@ app.get('/book/:id/:pg', (req, res) => {
                 title: config.servername,
                 book: bookinfo[req.params.id].title,
                 page: bookinfo[req.params.id].pages[req.params.pg-1][0],
+                cover: `/book/${req.params.id}/cover`,
                 content: path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].pages[req.params.pg-1][1]}`)
             })
 
