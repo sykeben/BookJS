@@ -160,13 +160,29 @@ app.get('/book/:id/:pg', (req, res) => {
 
         if (bookinfo[req.params.id].pages[req.params.pg-1] != undefined) {
 
+            var prev_link = '#'; var prev_class = ''
+            if (bookinfo[req.params.id].pages[req.params.pg-2] != undefined) {
+                prev_link = `/book/${req.params.id}/${parseInt(req.params.pg)-1}`
+            } else {
+                prev_class = 'disabled'
+            }
+
+            var next_link = '#'; var next_class = ''
+            if (bookinfo[req.params.id].pages[req.params.pg] != undefined) {
+                next_link = `/book/${req.params.id}/${parseInt(req.params.pg)+1}`
+            } else {
+                next_class = 'disabled'
+            }
+
             res.render(path.join(wwwbase, '/bookpage'), {
                 back: '/book/' + req.params.id,
                 title: config.servername,
                 book: bookinfo[req.params.id].title,
                 page: bookinfo[req.params.id].pages[req.params.pg-1][0],
                 cover: `/book/${req.params.id}/cover`,
-                content: path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].pages[req.params.pg-1][1]}`)
+                content: path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].pages[req.params.pg-1][1]}`),
+                prev_link: prev_link, prev_class: prev_class,
+                next_link: next_link, next_class: next_class
             })
 
         } else {
