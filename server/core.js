@@ -6,6 +6,11 @@ const express = require('express')
 const path = require('path')
 const fs = require('fs')
 
+// Check if running on Heroku
+if (process.env.isHeroku == 'true') {
+    console.log('Running on Heroku, config will be automatically adjusted.')
+}
+
 // Directory listing functions.
 const isDirectory = source => fs.lstatSync(source).isDirectory()
 const getDirectories = source => fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory)
@@ -181,4 +186,8 @@ app.get('/book/:id/:pg', (req, res) => {
 })
 
 // Start the server.
-app.listen(config.port, () => console.log(`Server ready on port ${config.port}.`))
+if (process.env.isHeroku == 'true') {
+    app.listen(process.env.port, () => console.log(`Server ready on port ${process.env.port}.`))
+} else {
+    app.listen(config.port, () => console.log(`Server ready on port ${config.port}.`))
+}
