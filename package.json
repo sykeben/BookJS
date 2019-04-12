@@ -4,6 +4,7 @@
   "description": "NodeJS web-book server.",
   "main": "server/core.js",
   "scripts": {
+    "start": "node server/core.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
