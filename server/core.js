@@ -43,7 +43,14 @@ app.get('/list', (req, res) => {
     // Book list.
     for (var i=0; i<bookdirs.length; i++) {
         var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
-        content += `<li><a class=\"larger text-body\" href=\"${'/book/' + currentbook}\">${bookinfo[currentbook].title}, <span class="font-italic">${bookinfo[currentbook].author}</span></a></li>`
+        if ( ((i%3)==0) || (i==0) ) content += '<div class="row">'
+        content += '<div class="col-3 text-center">'
+        content += `<a class=\"larger text-body\" href=\"${'/book/' + currentbook}\">`
+        content += `<img class=\"img-fluid\" src=\"/book/${currentbook}/cover\"><br>`
+        content += `${bookinfo[currentbook].title}, <span class="font-italic">${bookinfo[currentbook].author}</span>`
+        content += '</a>'
+        content += '</div>'
+        if ( ((i%3)==0) || (i==0) ) content += '</div>'
     }
 
     // Load it up!
@@ -64,7 +71,11 @@ app.get('/book/:id', (req, res) => {
 
         // Page list.
         for (var i=0; i<bookinfo[req.params.id].pages.length; i++) {
-            content += `<li><a class=\"larger text-body\" href=\"${'/book/' + req.params.id + '/' + (i+1).toString()}\">${bookinfo[req.params.id].pages[i][0]}</a></li>`
+            content += `<li>`
+            content += `<a class=\"larger text-body\" href=\"${'/book/' + req.params.id + '/' + (i+1).toString()}\">`
+            content += `${bookinfo[req.params.id].pages[i][0]}`
+            content += '</a>'
+            content += '</li>'
         }
 
         // Send it!
@@ -106,6 +117,27 @@ app.get('/book/:id/content/:file', function(req, res) {
             title: config.servername,
             type: 'resource',
             message: 'This file does not exist or has been moved.'
+        })
+    }
+
+})
+
+// Configure book covers.
+app.get('/book/:id/cover', (req, res) => {
+
+    if (bookinfo[req.params.id] != undefined) {
+
+        if (fs.existsSync(path.join(wwwbase, `/books/${req.params.id}/cover.png`))) {
+            res.sendFile(path.join(wwwbase, `/books/${req.params.id}/cover.png`))
+        } else {
+            res.sendFile(path.join(wwwbase, 'nocover.png'))
+        }
+
+    } else {
+        res.render(path.join(wwwbase, '/invalid'), {
+            title: config.servername,
+            type: 'book',
+            message: 'This book does not exist or has been moved.'
         })
     }
 
