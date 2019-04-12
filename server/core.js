@@ -187,7 +187,7 @@ app.get('/book/:id/:pg', (req, res) => {
 
 // Start the server.
 if (process.env.isHeroku == 'true') {
-    app.listen(process.env.port, () => console.log(`Server ready on port ${process.env.PORT}.`))
+    app.listen(process.env.PORT, () => console.log(`Server ready on port ${process.env.PORT}.`))
 } else {
     app.listen(config.port, () => console.log(`Server ready on port ${config.port}.`))
 }
