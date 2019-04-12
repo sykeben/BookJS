@@ -5,6 +5,7 @@
 const express = require('express')
 const path = require('path')
 const fs = require('fs')
+const slash = require('slash')
 
 // Check if running on Heroku
 if (process.env.isHeroku == 'true') {
@@ -13,11 +14,11 @@ if (process.env.isHeroku == 'true') {
 
 // Directory listing functions.
 const isDirectory = source => fs.lstatSync(source).isDirectory()
-const getDirectories = source => fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory)
+const getDirectories = source => fs.readdirSync(source).map(name => slash(path.join(source, name))).filter(isDirectory)
 
 // Configuration.
 const config = require(path.join(__dirname, '/config.json'))
-const wwwbase = path.join(__dirname, config.wwwbase)
+const wwwbase = slash(path.join(__dirname, config.wwwbase))
 console.log(`Base dir is ${wwwbase}.`)
 
 // Initialize the app.
@@ -33,7 +34,7 @@ app.get('/style', (req, res) => {
 var bookdirs = getDirectories(path.join(wwwbase, '/books'))
 var bookinfo = []
 for (var i=0; i<bookdirs.length; i++) {
-    var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
+    var currentbook = bookdirs[i].split('/')[bookdirs[i].split('/').length-1]
     bookinfo[currentbook] = require(path.join(bookdirs[i], '/info.json'))
 }
 console.log(`${bookdirs.length} book(s) found.`)
@@ -47,7 +48,7 @@ app.get('/list', (req, res) => {
 
     // Book list.
     for (var i=0; i<bookdirs.length; i++) {
-        var currentbook = bookdirs[i].split('\\')[bookdirs[i].split('\\').length-1]
+        var currentbook = bookdirs[i].split('/')[bookdirs[i].split('/').length-1]
         if ((i%4) == 0 && (i != 0)) content += '</div>'
         if ( ((i%4)==0) || (i==0) ) content += '<div class="row mb-5">'
         content += '<div class="col-3 text-center">'
