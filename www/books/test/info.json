@@ -1,0 +1,14 @@
+{
+
+    "title": "Test Book",
+    "author": "SykeBen",
+    "website": "https://sykeben.github.io",
+
+    "desc": "A small book used to test new features of BookJS.",
+
+    "pages": [
+        ["Simple Formatting", "1-simple"],
+        ["Adding Content", "2-content"]
+    ]
+
+}
