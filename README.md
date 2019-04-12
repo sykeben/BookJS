@@ -48,5 +48,10 @@ For the above "example" book, it's `info.json` file is formatted like this:
 
 <br>
 
+## Live Demo
+To showcase the portability and multi-platform features of BookJS, there is a live demo running on Heroku at [bookjs.herokuapp.com](https://bookjs.herokuapp.com/).
+
+<br>
+
 ## Important Note
 As these docs may be confusing, I will post tutorials on my YouTube channel, [Ben Codes](https://www.youtube.com/channel/UCZ0SO5pj7U3TfCmZqvuAG6Q).
