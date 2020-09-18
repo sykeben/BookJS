@@ -5,7 +5,7 @@
 
 ## Book Format
 Books are stored in `database/books`. A typical BookJS-formatted book is structured like this:
-```md
+```
 [example]
 │   info.json
 │   cover.png
@@ -29,7 +29,7 @@ Books are stored in `database/books`. A typical BookJS-formatted book is structu
 
 ## Book Info File Format
 For the above "example" book, it's `info.json` file is formatted like this:
-```json
+```javascript
 {
     "title": "Example Book",
     "author": "Cool Guy",
