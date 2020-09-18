@@ -202,6 +202,15 @@ app.get('/book/:id/:pg', (req, res) => {
 
 })
 
+// Configure other 404 page.
+app.use((req, res) => {
+    res.status(404).render(path.join(database, '/templates/invalid'), {
+        title: config.servername,
+        type: 'URL',
+        message: 'A 404 error occured while trying to serve this URL.'
+    })
+})
+
 // Start the server.
 if (process.env.isHeroku == 'true') {
     app.listen(process.env.PORT, () => console.log(`Server ready on port ${process.env.PORT}.`))
