@@ -23,15 +23,15 @@ const logRequests = config.logrequests
 logMsg(`Base dir is ${database}.`)
 
 // Logger scripts.
-function logReq(req, url) { // Request.
+function logReq(req, loc) { // Request.
     if (logRequests) {
         let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-        if (ip == '::ffff:127.0.0.1' | ip == '127.0.0.1') ip = 'localhost'
-        console.log(`[${ip}] ${url}`)
+        if (ip == '::ffff:127.0.0.1' | ip == '127.0.0.1' | ip == '::1') ip = 'localhost'
+        console.log(`[${ip}]\t ${loc}`)
     }
 }
 function logMsg(msg) { // Server message.
-    if (logRequests) msg = '<SERVER> ' + msg
+    if (logRequests) msg = '<server>\t ' + msg
     console.log(msg)
 }
 
@@ -44,9 +44,8 @@ app.get('/libraries/:id/:part', (req, res) => {
     if (req.params.part.substr(req.params.part.length - 5) == '.map') { // No debugging allowed!
         res.status(410).send('410')
     } else { // That's better.
-        let url = `/libraries/${req.params.id}/library.${req.params.part}`
-        logReq(req, url)
-        res.sendFile(path.join(database, url))
+        logReq(req, `lib\t ::\t ${req.params.id} > ${req.params.part}`)
+        res.sendFile(path.join(database, `/libraries/${req.params.id}/library.${req.params.part}`))
     }
 })
 
@@ -65,7 +64,7 @@ app.get('/list', (req, res) => {
 
     // Init.
     let content = ''
-    logReq(req, '/list')
+    logReq(req, 'list\t ::\t booklist')
 
     // Book list.
     for (var i=0; i<bookdirs.length; i++) {
@@ -94,7 +93,7 @@ app.get('/book/:id', (req, res) => {
 
     // Init.
     let content = ''
-    logReq(req, `/book/${req.params.id}`)
+    logReq(req, `book\t ::\t ${req.params.id} > index`)
 
     if (bookinfo[req.params.id] != undefined) {
 
@@ -130,7 +129,7 @@ app.get('/book/:id', (req, res) => {
 // Configure book content.
 app.get('/book/:id/page/:pg/content/:file', function(req, res) {
 
-    logReq(req, `/book/${req.params.id}/page/${req.params.pg}/content/${req.params.file}`)
+    logReq(req, `book\t ::\t ${req.params.id} > page > ${req.params.pg}\t ::\t content > ${req.params.file}`)
 
     if (bookinfo[req.params.id] != undefined) {
 
@@ -159,7 +158,7 @@ app.get('/book/:id/page/:pg/content/:file', function(req, res) {
 // Configure book covers.
 app.get('/book/:id/cover', (req, res) => {
 
-    logReq(req, `/book/${req.params.id}/cover`)
+    logReq(req, `book\t ::\t ${req.params.id} > cover`)
 
     if (bookinfo[req.params.id] != undefined) {
 
@@ -183,7 +182,7 @@ app.get('/book/:id/cover', (req, res) => {
 app.get('/book/:id/page/:pg', (req, res) => res.redirect(`/book/${req.params.id}/page/${req.params.pg}/view`))
 app.get('/book/:id/page/:pg/view', (req, res) => {
 
-    logReq(req, `/book/${req.params.id}/page/${req.params.pg}/view`)
+    logReq(req, `book :: ${req.params.id} > page > ${req.params.pg}`)
 
     if (bookinfo[req.params.id] != undefined) {
 
