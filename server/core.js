@@ -26,8 +26,8 @@ const app = express()
 app.set('view engine', 'ejs')
 
 // Configure styles.
-app.get('/style', (req, res) => {
-    res.sendFile(path.join(database, '/common.css'))
+app.get('/libraries/:id/:part', (req, res) => {
+    res.sendFile(path.join(database, `libraries/${req.params.id}/library.${req.params.part}`))
 })
 
 // Prep book list.
