@@ -72,7 +72,7 @@ app.get('/list', (req, res) => {
         if ((i%4) == 0 && (i != 0)) content += '</div>'
         if ( ((i%4)==0) || (i==0) ) content += '<div class="row mb-5">'
         content += '<div class="col-3 text-center">'
-        content += `<a class=\"larger text-body\" href=\"${'/book/' + currentbook}\">`
+        content += `<a class=\"larger text-body\" href=\"/book/${currentbook}/index\">`
         content += `<img class=\"img-fluid\" src=\"/book/${currentbook}/cover\"><br>`
         content += `${bookinfo[currentbook].title}, <span class="font-italic">${bookinfo[currentbook].author}</span>`
         content += '</a>'
@@ -89,7 +89,8 @@ app.get('/list', (req, res) => {
 })
 
 // Configure book indeicies.
-app.get('/book/:id', (req, res) => {
+app.get('/book/:id', (req, res) => { res.redirect(`/book/${req.params.id}/index`) })
+app.get('/book/:id/index', (req, res) => {
 
     // Init.
     let content = ''
@@ -203,7 +204,7 @@ app.get('/book/:id/page/:pg/view', (req, res) => {
             }
 
             res.render(path.join(database, '/templates/bookpage'), {
-                back: '/book/' + req.params.id,
+                back: `/book/${req.params.id}/index`,
                 title: config.servername,
                 book: bookinfo[req.params.id].title,
                 page: bookinfo[req.params.id].pages[req.params.pg-1][0],
