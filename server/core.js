@@ -18,8 +18,8 @@ const getDirectories = source => fs.readdirSync(source).map(name => slash(path.j
 
 // Configuration.
 const config = require(path.join(__dirname, '/config.json'))
-const wwwbase = slash(path.join(__dirname, config.wwwbase))
-console.log(`Base dir is ${wwwbase}.`)
+const database = slash(path.join(__dirname, config.database))
+console.log(`Base dir is ${database}.`)
 
 // Initialize the app.
 const app = express()
@@ -27,11 +27,11 @@ app.set('view engine', 'ejs')
 
 // Configure styles.
 app.get('/style', (req, res) => {
-    res.sendFile(path.join(wwwbase, '/common.css'))
+    res.sendFile(path.join(database, '/common.css'))
 })
 
 // Prep book list.
-var bookdirs = getDirectories(path.join(wwwbase, '/books'))
+var bookdirs = getDirectories(path.join(database, '/books'))
 var bookinfo = []
 for (var i=0; i<bookdirs.length; i++) {
     var currentbook = bookdirs[i].split('/')[bookdirs[i].split('/').length-1]
@@ -61,7 +61,7 @@ app.get('/list', (req, res) => {
     }
 
     // Load it up!
-    res.render(path.join(wwwbase, '/booklist'), {
+    res.render(path.join(database, '/booklist'), {
         title: config.servername,
         books: content
     })
@@ -86,7 +86,7 @@ app.get('/book/:id', (req, res) => {
         }
 
         // Send it!
-        res.render(path.join(wwwbase, '/pagelist'), {
+        res.render(path.join(database, '/pagelist'), {
             title: config.servername, book: bookinfo[req.params.id].title,
             author: bookinfo[req.params.id].author,
             website: bookinfo[req.params.id].website,
@@ -96,7 +96,7 @@ app.get('/book/:id', (req, res) => {
         })
 
     } else {
-        res.render(path.join(wwwbase, '/invalid'), {
+        res.render(path.join(database, '/invalid'), {
             title: config.servername,
             type: 'book',
             message: 'This book does not exist or has been moved.'
@@ -110,12 +110,12 @@ app.get('/book/:id/content/:file', function(req, res) {
 
     if (bookinfo[req.params.id] != undefined) {
 
-        if (fs.existsSync(path.join(wwwbase, `/books/${req.params.id}/content/${req.params.file}`))) {
+        if (fs.existsSync(path.join(database, `/books/${req.params.id}/content/${req.params.file}`))) {
 
-            res.sendFile(path.join(wwwbase, `/books/${req.params.id}/content/${req.params.file}`))
+            res.sendFile(path.join(database, `/books/${req.params.id}/content/${req.params.file}`))
 
         } else {
-            res.render(path.join(wwwbase, '/invalid'), {
+            res.render(path.join(database, '/invalid'), {
                 title: config.servername,
                 type: 'book',
                 message: 'This book does not exist or has been moved.'
@@ -123,7 +123,7 @@ app.get('/book/:id/content/:file', function(req, res) {
         }
 
     } else {
-        res.render(path.join(wwwbase, '/invalid'), {
+        res.render(path.join(database, '/invalid'), {
             title: config.servername,
             type: 'resource',
             message: 'This file does not exist or has been moved.'
@@ -137,14 +137,14 @@ app.get('/book/:id/cover', (req, res) => {
 
     if (bookinfo[req.params.id] != undefined) {
 
-        if (fs.existsSync(path.join(wwwbase, `/books/${req.params.id}/cover.png`))) {
-            res.sendFile(path.join(wwwbase, `/books/${req.params.id}/cover.png`))
+        if (fs.existsSync(path.join(database, `/books/${req.params.id}/cover.png`))) {
+            res.sendFile(path.join(database, `/books/${req.params.id}/cover.png`))
         } else {
-            res.sendFile(path.join(wwwbase, 'nocover.png'))
+            res.sendFile(path.join(database, 'nocover.png'))
         }
 
     } else {
-        res.render(path.join(wwwbase, '/invalid'), {
+        res.render(path.join(database, '/invalid'), {
             title: config.servername,
             type: 'book',
             message: 'This book does not exist or has been moved.'
@@ -174,26 +174,26 @@ app.get('/book/:id/:pg', (req, res) => {
                 next_class = 'disabled'
             }
 
-            res.render(path.join(wwwbase, '/bookpage'), {
+            res.render(path.join(database, '/bookpage'), {
                 back: '/book/' + req.params.id,
                 title: config.servername,
                 book: bookinfo[req.params.id].title,
                 page: bookinfo[req.params.id].pages[req.params.pg-1][0],
                 cover: `/book/${req.params.id}/cover`,
-                content: path.join(wwwbase, `/books/${req.params.id}/${bookinfo[req.params.id].pages[req.params.pg-1][1]}`),
+                content: path.join(database, `/books/${req.params.id}/${bookinfo[req.params.id].pages[req.params.pg-1][1]}`),
                 prev_link: prev_link, prev_class: prev_class,
                 next_link: next_link, next_class: next_class
             })
 
         } else {
-            res.render(path.join(wwwbase, '/invalid'), {
+            res.render(path.join(database, '/invalid'), {
                 title: config.servername,
                 type: 'page',
                 message: 'This page does not exist or has been moved.'
             })
         }
     } else {
-        res.render(path.join(wwwbase, '/invalid'), {
+        res.render(path.join(database, '/invalid'), {
             title: config.servername,
             type: 'book',
             message: 'This book does not exist or has been moved.'
