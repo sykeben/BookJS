@@ -5,7 +5,7 @@
 
 ## Book Format
 Books are stored in `database/books`. A typical BookJS-formatted book is structured like this:
-```
+```md
 [example]
 │   info.json
 │   cover.png
