@@ -9,7 +9,7 @@ const slash = require('slash')
 
 // Check if running on Heroku
 if (process.env.isHeroku == 'true') {
-    console.log('Running on Heroku, config will be automatically adjusted.')
+    logMsg('Running on Heroku, config will be automatically adjusted.')
 }
 
 // Directory listing functions.
@@ -19,7 +19,21 @@ const getDirectories = source => fs.readdirSync(source).map(name => slash(path.j
 // Configuration.
 const config = require(path.join(__dirname, '/config.json'))
 const database = slash(path.join(__dirname, config.database))
-console.log(`Base dir is ${database}.`)
+const logRequests = config.logrequests
+logMsg(`Base dir is ${database}.`)
+
+// Logger scripts.
+function logReq(req, url) { // Request.
+    if (logRequests) {
+        let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+        if (ip == '::ffff:127.0.0.1' | ip == '127.0.0.1') ip = 'localhost'
+        console.log(`[${ip}] ${url}`)
+    }
+}
+function logMsg(msg) { // Server message.
+    if (logRequests) msg = '<SERVER> ' + msg
+    console.log(msg)
+}
 
 // Initialize the app.
 const app = express()
@@ -27,7 +41,9 @@ app.set('view engine', 'ejs')
 
 // Configure styles.
 app.get('/libraries/:id/:part', (req, res) => {
-    res.sendFile(path.join(database, `/libraries/${req.params.id}/library.${req.params.part}`))
+    let url = `/libraries/${req.params.id}/library.${req.params.part}`
+    logReq(req, url)
+    res.sendFile(path.join(database, url))
 })
 
 // Prep book list.
@@ -37,7 +53,7 @@ for (var i=0; i<bookdirs.length; i++) {
     var currentbook = bookdirs[i].split('/')[bookdirs[i].split('/').length-1]
     bookinfo[currentbook] = require(path.join(bookdirs[i], '/info.json'))
 }
-console.log(`${bookdirs.length} book(s) found.`)
+logMsg(`${bookdirs.length} book(s) found.`)
 
 // Configure the index page.
 app.get('/', (req, res) => res.redirect('/list'))
@@ -45,6 +61,7 @@ app.get('/list', (req, res) => {
 
     // Init.
     let content = ''
+    logReq(req, '/list')
 
     // Book list.
     for (var i=0; i<bookdirs.length; i++) {
@@ -73,6 +90,7 @@ app.get('/book/:id', (req, res) => {
 
     // Init.
     let content = ''
+    logReq(req, `/book/${req.params.id}`)
 
     if (bookinfo[req.params.id] != undefined) {
 
@@ -108,6 +126,8 @@ app.get('/book/:id', (req, res) => {
 // Configure book content.
 app.get('/book/:id/content/:file', function(req, res) {
 
+    logReq(req, `/book/${req.params.id}/content/${req.params.file}`)
+
     if (bookinfo[req.params.id] != undefined) {
 
         if (fs.existsSync(path.join(database, `/books/${req.params.id}/content/${req.params.file}`))) {
@@ -135,6 +155,8 @@ app.get('/book/:id/content/:file', function(req, res) {
 // Configure book covers.
 app.get('/book/:id/cover', (req, res) => {
 
+    logReq(req, `/book/${req.params.id}/cover`)
+
     if (bookinfo[req.params.id] != undefined) {
 
         if (fs.existsSync(path.join(database, `/books/${req.params.id}/cover.png`))) {
@@ -155,6 +177,8 @@ app.get('/book/:id/cover', (req, res) => {
 
 // Configure book pages.
 app.get('/book/:id/:pg', (req, res) => {
+
+    logReq(req, `/book/${req.params.id}/${req.params.pg}`)
 
     if (bookinfo[req.params.id] != undefined) {
 
@@ -213,7 +237,7 @@ app.use((req, res) => {
 
 // Start the server.
 if (process.env.isHeroku == 'true') {
-    app.listen(process.env.PORT, () => console.log(`Server ready on port ${process.env.PORT}.`))
+    app.listen(process.env.PORT, () => logMsg(`Server ready on port ${process.env.PORT}.`))
 } else {
-    app.listen(config.port, () => console.log(`Server ready on port ${config.port}.`))
+    app.listen(config.port, () => logMsg(`Server ready on port ${config.port}.`))
 }
