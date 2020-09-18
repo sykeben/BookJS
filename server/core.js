@@ -3,13 +3,14 @@
 
 // Library import(s).
 const express = require('express')
+const ejs = require('ejs')
 const path = require('path')
 const fs = require('fs')
 const slash = require('slash')
 
 // Check if running on Heroku
 if (process.env.isHeroku == 'true') {
-    logMsg('Running on Heroku, config will be automatically adjusted.')
+    logMsg('init\t ::\t running on Heroku, config will be automatically adjusted')
 }
 
 // Directory listing functions.
@@ -20,7 +21,19 @@ const getDirectories = source => fs.readdirSync(source).map(name => slash(path.j
 const config = require(path.join(__dirname, '/config.json'))
 const database = slash(path.join(__dirname, config.database))
 const logRequests = config.logrequests
-logMsg(`Base dir is ${database}.`)
+const purifyPages = config.purifypages
+logMsg(`init\t ::\t database directory is ${database}`)
+
+// Set up purification.
+const createDomPurify = require('dompurify')
+const { JSDOM: jsDom } = require('jsdom')
+const purificationWindow = new jsDom('').window
+const domPurify = createDomPurify(purificationWindow)
+if (purifyPages) {
+    logMsg('init\t ::\t purification is enabled')
+} else {
+    logMsg('init\t ::\t PURIFICATION IS DISABLED! THIS MAY BE UNSAFE, CONTINUE AT YOUR OWN RISK')
+}
 
 // Logger scripts.
 function logReq(req, loc) { // Request.
@@ -41,7 +54,7 @@ app.set('view engine', 'ejs')
 
 // Configure web libraries.
 app.get('/libraries/:id/:part', (req, res) => {
-    if (req.params.part.substr(req.params.part.length - 5) == '.map') { // No debugging allowed!
+    if (req.params.part.substr(req.params.part.length - 4) == '.map') { // No debugging allowed!
         res.status(410).send('410')
     } else { // That's better.
         logReq(req, `lib\t ::\t ${req.params.id} > ${req.params.part}`)
@@ -56,7 +69,7 @@ for (var i=0; i<bookdirs.length; i++) {
     var currentbook = bookdirs[i].split('/')[bookdirs[i].split('/').length-1]
     bookinfo[currentbook] = require(path.join(bookdirs[i], '/info.json'))
 }
-logMsg(`${bookdirs.length} book(s) found.`)
+logMsg(`init\t ::\t ${bookdirs.length} book(s) found`)
 
 // Configure the index page.
 app.get('/', (req, res) => res.redirect('/list'))
@@ -188,7 +201,8 @@ app.get('/book/:id/page/:pg/view', (req, res) => {
     if (bookinfo[req.params.id] != undefined) {
 
         if (bookinfo[req.params.id].pages[req.params.pg-1] != undefined) {
-
+            
+            // Previous page link.
             var prev_link = '#'; var prev_class = ''
             if (bookinfo[req.params.id].pages[req.params.pg-2] != undefined) {
                 prev_link = `/book/${req.params.id}/page/${parseInt(req.params.pg)-1}/view`
@@ -196,6 +210,7 @@ app.get('/book/:id/page/:pg/view', (req, res) => {
                 prev_class = 'disabled'
             }
 
+            // Next page link.
             var next_link = '#'; var next_class = ''
             if (bookinfo[req.params.id].pages[req.params.pg] != undefined) {
                 next_link = `/book/${req.params.id}/page/${parseInt(req.params.pg)+1}/view`
@@ -203,13 +218,23 @@ app.get('/book/:id/page/:pg/view', (req, res) => {
                 next_class = 'disabled'
             }
 
+            // Render & purify page DOM.
+            var renderedContent = ejs.render(path.join(database, `/books/${req.params.id}/pages/${bookinfo[req.params.id].pages[req.params.pg-1][1]}/page`))
+            var pageContent
+            if (purifyPages) {
+                pageContent = domPurify.sanitize(renderedContent)
+            } else {
+                pageContent = renderedContent
+            }
+
+            // Render it up!
             res.render(path.join(database, '/templates/bookpage'), {
                 back: `/book/${req.params.id}/index`,
                 title: config.servername,
                 book: bookinfo[req.params.id].title,
                 page: bookinfo[req.params.id].pages[req.params.pg-1][0],
                 cover: `/book/${req.params.id}/cover`,
-                content: path.join(database, `/books/${req.params.id}/pages/${bookinfo[req.params.id].pages[req.params.pg-1][1]}/page`),
+                content: pageContent,
                 prev_link: prev_link, prev_class: prev_class,
                 next_link: next_link, next_class: next_class
             })
@@ -242,7 +267,7 @@ app.use((req, res) => {
 
 // Start the server.
 if (process.env.isHeroku == 'true') {
-    app.listen(process.env.PORT, () => logMsg(`Server ready on port ${process.env.PORT}.`))
+    app.listen(process.env.PORT, () => logMsg(`init\t ::\t server ready on port ${process.env.PORT}`))
 } else {
-    app.listen(config.port, () => logMsg(`Server ready on port ${config.port}.`))
+    app.listen(config.port, () => logMsg(`init\t ::\t server ready on port ${config.port}`))
 }

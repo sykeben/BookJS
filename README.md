@@ -3,7 +3,7 @@
 
 <br>
 
-## Book Format
+## Book Structure
 Books are stored in `database/books`. A typical BookJS-formatted book is structured like this:
 ```
 [example]
@@ -50,5 +50,21 @@ For the above "example" book, it's `info.json` file is formatted like this:
 
 <br>
 
-## Important Note
+## Configuration Options
+BookJS is configurable through `server/config.json`.
+- `port`: Pretty self-explanitory, tells the webserver which port to run on, which is `80` by default.
+- `servername`: This is the name of your BookJS server, which appears in the title of every page. Make sure to change this so your server isn't generic.
+- `database`: The directory of all the server data (libraries, books, etc). Changing this allows for the database to be placed elsewhere (for example, an alternate network location).
+- `logrequests`: Whether or not valid requests to the server will be logged. This is only intended for debugging.
+- `purifypages`: Whether or not to purify the DOM content for book pages. It is highly recommended that this remains set to `true` for security and compatibility.
+
+<br>
+
+## Security Notes
+- When page purification is enabled (which it should be), [DomPurify](https://github.com/cure53/DOMPurify) is used to clean and sanitize book page DOMs.
+- As of now, HTTPS is not supported or implemented yet. I will be adding it in the near future.
+
+<br>
+
+## Shameless Self-Plug
 As these docs may be confusing, I may soon post tutorials on my YouTube channel, [Ben Codes](https://www.youtube.com/channel/UCZ0SO5pj7U3TfCmZqvuAG6Q).
