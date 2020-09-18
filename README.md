@@ -54,4 +54,4 @@ To showcase the portability and multi-platform features of BookJS, there is a li
 <br>
 
 ## Important Note
-As these docs may be confusing, I will post tutorials on my YouTube channel, [Ben Codes](https://www.youtube.com/channel/UCZ0SO5pj7U3TfCmZqvuAG6Q).
+As these docs may be confusing, I may soon post tutorials on my YouTube channel, [Ben Codes](https://www.youtube.com/channel/UCZ0SO5pj7U3TfCmZqvuAG6Q).
