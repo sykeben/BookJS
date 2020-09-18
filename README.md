@@ -38,20 +38,15 @@ For the above "example" book, it's `info.json` file is formatted like this:
     "desc": "Super epic example book!",
 
     "pages": [
-        ["Page 1: The Beginning", "page-1"],
-        ["Page 2: The End", "page-2"]
+        ["Introduction", "intro"],
+        ["chapter 1: Hello, World", "chapter-1"]
     ]
 }
 ```
 - `title` & `author` are, obviously, the title and author of the book.
 - `website` is an optional link to the author's webpage.
 - `desc` is a short description of the book, displayed on the page list.
-- `pages` is an array of page titles and filenames. Each item in the array must be structured as `["Title", "file"]`.
-
-<br>
-
-## Live Demo
-To showcase the portability and multi-platform features of BookJS, there is a live demo running on Heroku at [bookjs.herokuapp.com](https://bookjs.herokuapp.com/).
+- `pages` is an array of page titles and directory names. Each item in the array must be structured as `["Title", "dir"]`.
 
 <br>
 
