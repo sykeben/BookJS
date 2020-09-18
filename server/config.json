@@ -3,5 +3,6 @@
     "servername": "BookJS Server",
     "database": "/../database",
     "logrequests": false,
-    "purifypages": true
+    "purifypages": true,
+    "sanitizemetadata": true
 }

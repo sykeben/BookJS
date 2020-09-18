@@ -7,6 +7,9 @@ const ejs = require('ejs')
 const path = require('path')
 const fs = require('fs')
 const slash = require('slash')
+const createDOMPurify = require('dompurify')
+const { JSDOM } = require('jsdom')
+const sanitizeHTML = require('sanitize-html')
 
 // Check if running on Heroku
 if (process.env.isHeroku == 'true') {
@@ -22,17 +25,29 @@ const config = require(path.join(__dirname, '/config.json'))
 const database = slash(path.join(__dirname, config.database))
 const logRequests = config.logrequests
 const purifyPages = config.purifypages
+const sanitizeMetadata = config.sanitizemetadata
 logMsg(`init\t ::\t database directory is ${database}`)
 
-// Set up purification.
-const createDomPurify = require('dompurify')
-const { JSDOM: jsDom } = require('jsdom')
-const purificationWindow = new jsDom('').window
-const domPurify = createDomPurify(purificationWindow)
+// Set up page purification (loaded even if disabled, just in case).
+const window = new JSDOM('').window
+const DOMPurify = createDOMPurify(window)
 if (purifyPages) {
-    logMsg('init\t ::\t purification is enabled')
+    logMsg('init\t ::\t page purification is enabled')
 } else {
-    logMsg('init\t ::\t PURIFICATION IS DISABLED! THIS MAY BE UNSAFE, CONTINUE AT YOUR OWN RISK')
+    logMsg('init\t ::\t PAGE PURIFICATION IS DISABLED! THIS MAY BE UNSAFE, CONTINUE AT YOUR OWN RISK')
+}
+
+// Set up metadata sanitization (loaded even if disabled, just in case).
+function doSanitizeMetadata(dirtyMeta) {
+    return sanitizeHTML(dirtyMeta, {
+        allowedTags: [],
+        allowedAttributes: {}
+    })
+}
+if (sanitizeMetadata) {
+    logMsg('init\t ::\t metadata sanitization is enabled')
+} else {
+    logMsg('init\t ::\t METADATA SANITIZATION IS DISABLED! THIS MAY BE UNSAFE, CONTINUE AT YOUR OWN RISK')
 }
 
 // Logger scripts.
@@ -66,8 +81,21 @@ app.get('/libraries/:id/:part', (req, res) => {
 var bookdirs = getDirectories(path.join(database, '/books'))
 var bookinfo = []
 for (var i=0; i<bookdirs.length; i++) {
+
+    // Get current book info.
     var currentbook = bookdirs[i].split('/')[bookdirs[i].split('/').length-1]
     bookinfo[currentbook] = require(path.join(bookdirs[i], '/info.json'))
+
+    // Sanaitize it (yes, this looks clunky but it's better to do it now than every time it's loaded).
+    bookinfo[currentbook].title = doSanitizeMetadata(bookinfo[currentbook].title)
+    bookinfo[currentbook].author = doSanitizeMetadata(bookinfo[currentbook].author)
+    bookinfo[currentbook].website = doSanitizeMetadata(bookinfo[currentbook].website)
+    bookinfo[currentbook].desc = doSanitizeMetadata(bookinfo[currentbook].desc)
+    for (var j=0; j<bookinfo[currentbook].pages.length; j++) {
+        bookinfo[currentbook].pages[j][0] = doSanitizeMetadata(bookinfo[currentbook].pages[j][0])
+        bookinfo[currentbook].pages[j][1] = doSanitizeMetadata(bookinfo[currentbook].pages[j][1])
+    }
+
 }
 logMsg(`init\t ::\t ${bookdirs.length} book(s) found`)
 
@@ -218,25 +246,26 @@ app.get('/book/:id/page/:pg/view', (req, res) => {
                 next_class = 'disabled'
             }
 
-            // Render & purify page DOM.
-            var renderedContent = ejs.render(path.join(database, `/books/${req.params.id}/pages/${bookinfo[req.params.id].pages[req.params.pg-1][1]}/page`))
-            var pageContent
-            if (purifyPages) {
-                pageContent = domPurify.sanitize(renderedContent)
-            } else {
-                pageContent = renderedContent
-            }
+            // Serve page.
+            ejs.renderFile(path.join(database, `/books/${req.params.id}/pages/${bookinfo[req.params.id].pages[req.params.pg-1][1]}/page.ejs`), (err, str) => {
 
-            // Render it up!
-            res.render(path.join(database, '/templates/bookpage'), {
-                back: `/book/${req.params.id}/index`,
-                title: config.servername,
-                book: bookinfo[req.params.id].title,
-                page: bookinfo[req.params.id].pages[req.params.pg-1][0],
-                cover: `/book/${req.params.id}/cover`,
-                content: pageContent,
-                prev_link: prev_link, prev_class: prev_class,
-                next_link: next_link, next_class: next_class
+                // Purify.
+                if (purifyPages) {
+                    str = DOMPurify.sanitize(str)
+                }
+    
+                // Render it up!
+                res.render(path.join(database, '/templates/bookpage'), {
+                    back: `/book/${req.params.id}/index`,
+                    title: config.servername,
+                    book: bookinfo[req.params.id].title,
+                    page: bookinfo[req.params.id].pages[req.params.pg-1][0],
+                    cover: `/book/${req.params.id}/cover`,
+                    content: str,
+                    prev_link: prev_link, prev_class: prev_class,
+                    next_link: next_link, next_class: next_class
+                })
+
             })
 
         } else {

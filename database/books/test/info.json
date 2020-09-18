@@ -8,7 +8,8 @@
 
     "pages": [
         ["Simple Formatting", "simple-formatting"],
-        ["Adding Content", "adding-content"]
+        ["Adding Content", "adding-content"],
+        ["Evil Scripts", "evil-scripts"]
     ]
 
 }
