@@ -7,7 +7,8 @@
     "desc": "The built-in manual for BookJS, teaching usage, management, troubleshooting, and more!",
 
     "pages": [
-        ["Introduction", "intro"]
+        ["Introduction", "intro"],
+        ["Book Format", "book-format"]
     ]
 
 }

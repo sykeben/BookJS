@@ -7,21 +7,23 @@
 Books are stored in `database/books`. A typical BookJS-formatted book is structured like this:
 ```
 [example]
-|   cover.png
-|   info.json
-|   page-1.ejs
-|   page-2.ejs
-|
-└── [content]
-        cool-pic-1.png
-        cool-pic-2.png
-        example-code.html
+│   info.json
+│   cover.png
+└───[pages]
+    ├───[intro]
+    │   │   page.ejs
+    │   └───[content]
+    │           author.png
+    │           rainbow-text.css
+    └───[chapter-1]
+            page.ejs
 ```
 - `[example]` is the topmost directory of the book.
 - `cover.png` is the book cover in PNG format, if there is none, the server will simply display a placeholder.
 - `info.json` is the book info file. For more info on this one, keep reading.
-- `page_1.ejs` and `page_2.ejs` are page files (in [EJS](https://www.ejs.co/) format), which are defined in `info.json`.
-- `[content]` is a folder used to serve content displayed in the book (like images), and can be referenced by setting an elements source to `content/[filename]`. You can put anything you like here.
+- `[intro]` and `[chapter-1]` are page folders, names and IDs for these folders are are defined in `info.json`.
+- `page.ejs` contains the content for each page.
+- `[content]` folders are folder used to serve additional content displayed in the book (like images) for each page, and can be referenced by setting an elements source to `content/[filename]`. You can put (almost) anything you like here.
 
 <br>
 

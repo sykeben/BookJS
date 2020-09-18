@@ -3,6 +3,7 @@
     text-align: center;
     background-size: 800% 800%;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 900;
     animation: rainbow 8s ease infinite;

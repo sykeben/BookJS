@@ -39,11 +39,15 @@ function logMsg(msg) { // Server message.
 const app = express()
 app.set('view engine', 'ejs')
 
-// Configure styles.
+// Configure web libraries.
 app.get('/libraries/:id/:part', (req, res) => {
-    let url = `/libraries/${req.params.id}/library.${req.params.part}`
-    logReq(req, url)
-    res.sendFile(path.join(database, url))
+    if (req.params.part.substr(req.params.part.length - 5) == '.map') { // No debugging allowed!
+        res.status(410).send('410')
+    } else { // That's better.
+        let url = `/libraries/${req.params.id}/library.${req.params.part}`
+        logReq(req, url)
+        res.sendFile(path.join(database, url))
+    }
 })
 
 // Prep book list.
@@ -97,7 +101,7 @@ app.get('/book/:id', (req, res) => {
         // Page list.
         for (var i=0; i<bookinfo[req.params.id].pages.length; i++) {
             content += `<li>`
-            content += `<a class=\"larger text-body\" href=\"${'/book/' + req.params.id + '/' + (i+1).toString()}\">`
+            content += `<a class=\"larger text-body\" href=\"/book/${req.params.id}/page/${(i+1).toString()}/view\">`
             content += `${bookinfo[req.params.id].pages[i][0]}`
             content += '</a>'
             content += '</li>'
@@ -124,15 +128,15 @@ app.get('/book/:id', (req, res) => {
 })
 
 // Configure book content.
-app.get('/book/:id/content/:file', function(req, res) {
+app.get('/book/:id/page/:pg/content/:file', function(req, res) {
 
-    logReq(req, `/book/${req.params.id}/content/${req.params.file}`)
+    logReq(req, `/book/${req.params.id}/page/${req.params.pg}/content/${req.params.file}`)
 
     if (bookinfo[req.params.id] != undefined) {
 
-        if (fs.existsSync(path.join(database, `/books/${req.params.id}/content/${req.params.file}`))) {
+        if (fs.existsSync(path.join(database, `/books/${req.params.id}/pages/${bookinfo[req.params.id].pages[req.params.pg-1][1]}/content/${req.params.file}`))) {
 
-            res.sendFile(path.join(database, `/books/${req.params.id}/content/${req.params.file}`))
+            res.sendFile(path.join(database, `/books/${req.params.id}/pages/${bookinfo[req.params.id].pages[req.params.pg-1][1]}/content/${req.params.file}`))
 
         } else {
             res.render(path.join(database, '/templates/invalid'), {
@@ -176,9 +180,10 @@ app.get('/book/:id/cover', (req, res) => {
 })
 
 // Configure book pages.
-app.get('/book/:id/:pg', (req, res) => {
+app.get('/book/:id/page/:pg', (req, res) => res.redirect(`/book/${req.params.id}/page/${req.params.pg}/view`))
+app.get('/book/:id/page/:pg/view', (req, res) => {
 
-    logReq(req, `/book/${req.params.id}/${req.params.pg}`)
+    logReq(req, `/book/${req.params.id}/page/${req.params.pg}/view`)
 
     if (bookinfo[req.params.id] != undefined) {
 
@@ -186,14 +191,14 @@ app.get('/book/:id/:pg', (req, res) => {
 
             var prev_link = '#'; var prev_class = ''
             if (bookinfo[req.params.id].pages[req.params.pg-2] != undefined) {
-                prev_link = `/book/${req.params.id}/${parseInt(req.params.pg)-1}`
+                prev_link = `/book/${req.params.id}/page/${parseInt(req.params.pg)-1}/view`
             } else {
                 prev_class = 'disabled'
             }
 
             var next_link = '#'; var next_class = ''
             if (bookinfo[req.params.id].pages[req.params.pg] != undefined) {
-                next_link = `/book/${req.params.id}/${parseInt(req.params.pg)+1}`
+                next_link = `/book/${req.params.id}/page/${parseInt(req.params.pg)+1}/view`
             } else {
                 next_class = 'disabled'
             }
@@ -204,7 +209,7 @@ app.get('/book/:id/:pg', (req, res) => {
                 book: bookinfo[req.params.id].title,
                 page: bookinfo[req.params.id].pages[req.params.pg-1][0],
                 cover: `/book/${req.params.id}/cover`,
-                content: path.join(database, `/books/${req.params.id}/${bookinfo[req.params.id].pages[req.params.pg-1][1]}`),
+                content: path.join(database, `/books/${req.params.id}/pages/${bookinfo[req.params.id].pages[req.params.pg-1][1]}/page`),
                 prev_link: prev_link, prev_class: prev_class,
                 next_link: next_link, next_class: next_class
             })

@@ -7,8 +7,8 @@
     "desc": "A small book used to test new features of BookJS.",
 
     "pages": [
-        ["Simple Formatting", "1-simple"],
-        ["Adding Content", "2-content"]
+        ["Simple Formatting", "simple-formatting"],
+        ["Adding Content", "adding-content"]
     ]
 
 }
