@@ -27,7 +27,7 @@ app.set('view engine', 'ejs')
 
 // Configure styles.
 app.get('/libraries/:id/:part', (req, res) => {
-    res.sendFile(path.join(database, `libraries/${req.params.id}/library.${req.params.part}`))
+    res.sendFile(path.join(database, `/libraries/${req.params.id}/library.${req.params.part}`))
 })
 
 // Prep book list.
@@ -61,7 +61,7 @@ app.get('/list', (req, res) => {
     }
 
     // Load it up!
-    res.render(path.join(database, '/booklist'), {
+    res.render(path.join(database, '/templates/booklist'), {
         title: config.servername,
         books: content
     })
@@ -86,7 +86,7 @@ app.get('/book/:id', (req, res) => {
         }
 
         // Send it!
-        res.render(path.join(database, '/pagelist'), {
+        res.render(path.join(database, '/templates/pagelist'), {
             title: config.servername, book: bookinfo[req.params.id].title,
             author: bookinfo[req.params.id].author,
             website: bookinfo[req.params.id].website,
@@ -96,7 +96,7 @@ app.get('/book/:id', (req, res) => {
         })
 
     } else {
-        res.render(path.join(database, '/invalid'), {
+        res.render(path.join(database, '/templates/invalid'), {
             title: config.servername,
             type: 'book',
             message: 'This book does not exist or has been moved.'
@@ -115,7 +115,7 @@ app.get('/book/:id/content/:file', function(req, res) {
             res.sendFile(path.join(database, `/books/${req.params.id}/content/${req.params.file}`))
 
         } else {
-            res.render(path.join(database, '/invalid'), {
+            res.render(path.join(database, '/templates/invalid'), {
                 title: config.servername,
                 type: 'book',
                 message: 'This book does not exist or has been moved.'
@@ -123,7 +123,7 @@ app.get('/book/:id/content/:file', function(req, res) {
         }
 
     } else {
-        res.render(path.join(database, '/invalid'), {
+        res.render(path.join(database, '/templates/invalid'), {
             title: config.servername,
             type: 'resource',
             message: 'This file does not exist or has been moved.'
@@ -140,11 +140,11 @@ app.get('/book/:id/cover', (req, res) => {
         if (fs.existsSync(path.join(database, `/books/${req.params.id}/cover.png`))) {
             res.sendFile(path.join(database, `/books/${req.params.id}/cover.png`))
         } else {
-            res.sendFile(path.join(database, 'nocover.png'))
+            res.sendFile(path.join(database, '/nocover.png'))
         }
 
     } else {
-        res.render(path.join(database, '/invalid'), {
+        res.render(path.join(database, '/templates/invalid'), {
             title: config.servername,
             type: 'book',
             message: 'This book does not exist or has been moved.'
@@ -174,7 +174,7 @@ app.get('/book/:id/:pg', (req, res) => {
                 next_class = 'disabled'
             }
 
-            res.render(path.join(database, '/bookpage'), {
+            res.render(path.join(database, '/templates/bookpage'), {
                 back: '/book/' + req.params.id,
                 title: config.servername,
                 book: bookinfo[req.params.id].title,
@@ -186,14 +186,14 @@ app.get('/book/:id/:pg', (req, res) => {
             })
 
         } else {
-            res.render(path.join(database, '/invalid'), {
+            res.render(path.join(database, '/templates/invalid'), {
                 title: config.servername,
                 type: 'page',
                 message: 'This page does not exist or has been moved.'
             })
         }
     } else {
-        res.render(path.join(database, '/invalid'), {
+        res.render(path.join(database, '/templates/invalid'), {
             title: config.servername,
             type: 'book',
             message: 'This book does not exist or has been moved.'
