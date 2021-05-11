@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/sykeben/BookJS#readme",
   "dependencies": {
-    "dompurify": "^2.0.16",
+    "dompurify": "^2.0.17",
     "ejs": "^2.7.4",
     "express": "^4.17.1",
     "jsdom": "^16.4.0",
