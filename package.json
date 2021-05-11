@@ -26,7 +26,7 @@
     "express": "^4.17.1",
     "jsdom": "^16.4.0",
     "path": "^0.12.7",
-    "sanitize-html": "^1.27.4",
+    "sanitize-html": "^2.3.2",
     "slash": "^2.0.0"
   }
 }
